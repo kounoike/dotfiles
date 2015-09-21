@@ -200,3 +200,6 @@ set autoread
 set nobackup
 set noundofile
 set encoding=utf-8
+
+"ヤンクサイズ
+set viminfo='20,\"1000
