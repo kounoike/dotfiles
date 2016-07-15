@@ -1,0 +1,172 @@
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+[[plugins]]
+repo = 'Shougo/vimproc.vim'
+build = 'make'
+
+[[plugins]]
+repo = 'Shougo/neosnippet-snippets'
+
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+hook_add = '''
+  let g:deoplete#enable_at_startup = 1
+'''
+
+# Color
+
+[[plugins]] # hybrid
+repo = 'w0ng/vim-hybrid'
+
+[[plugins]] # solarized
+repo = 'altercation/vim-colors-solarized'
+
+[[plugins]]
+repo = 'nathanaelkane/vim-indent-guides'
+
+# [[plugins]]
+# repo = 'vim-airline/vim-airline'
+# depends = ['vim-airline-themes']
+# 
+# hook_add = '''
+#   let g:airline_powerline_fonts=1
+#   let g:airline_theme='molokai'
+#   set laststatus=2
+# '''
+# 
+# [[plugins]]
+# repo = 'vim-airline/vim-airline-themes'
+
+[[plugins]]
+repo = 'tpope/vim-fugitive'
+
+[[plugins]]
+repo = 'airblade/vim-gitgutter'
+hook_add = '''
+let g:gitgutter_sign_added = '✚'
+let g:gitgutter_sign_modified = '➜'
+let g:gitgutter_sign_removed = '✘'
+'''
+
+[[plugins]]
+repo = 'itchyny/lightline.vim'
+hook_add = '''
+let g:lightline = {
+  \ 'colorscheme': 'solarized',
+  \ 'active': {
+  \   'left': [ [ 'mode', 'paste' ],
+  \             [ 'fugitive', 'gitgutter', 'readonly', 'filename', 'modified' ] ],
+  \  'right': [
+  \    ['lineinfo'],
+  \    ['charcode', 'fileformat', 'fileencoding', 'filetype']
+  \  ]
+  \ },
+  \ 'component': {
+  \   'readonly': '%{&filetype=="help"?"":&readonly?"RO":""}',
+  \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
+  \   'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}'
+  \ },
+  \ 'component_visible_condition': {
+  \   'readonly': '(&filetype!="help"&& &readonly)',
+  \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
+  \   'fugitive': 'LightLineFugitive()',
+  \   'gitgutter': 'LightLineGitGutter()'
+  \ },
+  \ 'component_function': {
+  \   'mode': 'LightLineMode',
+  \   'fileformat': 'LightLineFileFormat',
+  \   'filetype': 'LightLineFileType',
+  \   'fileencoding': 'LightLineFileEncoding',
+  \   'charcode': 'LightLineCharCode'
+  \ },
+  \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
+  \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
+  \ }
+
+function! LightLineMode()
+  if winwidth('.') <= 60
+    return ''
+  endif
+  " let l:mode = substitute(substitute(lightline#mode(), 'NORMAL', '通常', ''), 'INSERT', '挿入', '')
+  let l:mode = substitute(lightline#mode(), 'V-BLOCK', 'V-BLOC', '')
+  return l:mode
+endfunction
+
+function! LightLineFugitive()
+  if exists("*fugitive#head")
+    let branch = fugitive#head()
+    return branch !=# '' ? "\ue0a2 ".branch : ''
+  endif
+  return ''
+endfunction
+
+function! LightLineGitGutter()
+  if ! exists('*GitGutterGetHunkSummary')
+        \ || ! get(g:, 'gitgutter_enabled', 0)
+        \ || winwidth('.') <= 90
+    return ''
+  endif
+  let symbols = [
+        \ g:gitgutter_sign_added . ' ',
+        \ g:gitgutter_sign_modified . ' ',
+        \ g:gitgutter_sign_removed . ' '
+        \ ]
+  let hunks = GitGutterGetHunkSummary()
+  let ret = []
+  for i in [0, 1, 2]
+    if hunks[i] > 0
+      call add(ret, symbols[i] . hunks[i])
+    endif
+  endfor
+  return join(ret, ' ')
+endfunction
+
+function! LightLineFileFormat()
+  return winwidth('.') > 70 ? &fileformat : ''
+endfunction
+
+function! LightLineFileType()
+  return winwidth('.') > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightLineFileEncoding()
+  return winwidth('.') > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
+endfunction
+
+function! LightLineCharCode()
+  if winwidth('.') <= 70
+    return ''
+  endif
+  redir => ascii
+  silent! ascii
+  redir END
+
+  if match(ascii, 'NUL') != -1
+    return 'NUL'
+  endif
+
+  let nrformat = '%02x'
+  let encoding = (&fenc == '' ? &enc : &fenc)
+  if encoding == 'utf-8'
+    let nrformat = '%04x'
+  endif
+  let [str, char, nr; rest] = matchlist(ascii, '\v\<(.{-1,})\>\s*([0-9]+)')
+  let nr = printf(nrformat, nr)
+  return char.":".nr
+endfunction
+'''
+
+
+# Lang
+[[plugins]] # Toml
+repo  = 'cespare/vim-toml'
+on_ft = 'toml'
+
+[[plugins]] # Markdown
+repo = 'rcmdnk/vim-markdown'
+on_ft = ['markdown','mkd']
+hook_add = '''
+  let g:vim_markdown_frontmatter = 1
+  let g:vim_markdown_math = 1
+'''
