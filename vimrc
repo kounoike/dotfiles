@@ -98,6 +98,9 @@ let g:lightline = {
 NeoBundle 'Flake8-vim'
 NeoBundle 'fisadev/vim-isort'
 
+NeoBundle 'alvan/vim-closetag'
+let g:closetag_filenames = '*.html'
+
 NeoBundle 'scrooloose/syntastic'
 let g:syntastic_mode_map = {
             \ 'mode': 'active',
